@@ -1,6 +1,6 @@
 #!/sbin/bash
 
-echo "Nandroid删除备份包" > "$MENU_FILE"
+echo "删除备份文件" > "$MENU_FILE"
 echo "返回:menu:.." >> "$MENU_FILE"
 
 NAND_DIR_ADB=/sdcard/nandroid/adbrecovery

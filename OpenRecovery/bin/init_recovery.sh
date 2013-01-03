@@ -7,7 +7,7 @@
 # STR - Milestone XT (XT720)
 # STCU  - Sholes Tablet (XT701)
 
-echo "正在加载Open Recovery..."
+echo "正在加载恢复系统..."
 
 #run the initializers
 #=======================================
@@ -57,7 +57,7 @@ fi
 #=======================================
 export NAND_MENU_FILE="/menu/nand.menu"
 
-echo "Nandroid备份还原" > "$NAND_MENU_FILE"
+echo "备份 / 还原" > "$NAND_MENU_FILE"
 echo "返回:menu:.." >> "$NAND_MENU_FILE"
 echo "备份:scripted_menu:nandroid_backup.menu:menu_nandroid_backup.sh" >> "$NAND_MENU_FILE"
 echo "还原:scripted_menu:nandroid_restore.menu:menu_nandroid_restore.sh" >> "$NAND_MENU_FILE"
@@ -67,12 +67,12 @@ echo "删除:scripted_menu:nandroid_delete.menu:menu_nandroid_delete.sh" >> "$NA
 #=======================================
 export SETTINGS_MENU_FILE="/menu/settings.menu"
 
-echo "设置" > "$SETTINGS_MENU_FILE"
+echo "系统设置" > "$SETTINGS_MENU_FILE"
 echo "返回:menu:.." >> "$SETTINGS_MENU_FILE"
-echo "Bash:scripted_menu:bash.menu:menu_bash.sh" >> "$SETTINGS_MENU_FILE"
-echo "主题:scripted_menu:theme.menu:menu_theme.sh" >> "$SETTINGS_MENU_FILE"
+echo "Bash 设置:scripted_menu:bash.menu:menu_bash.sh" >> "$SETTINGS_MENU_FILE"
+echo "主题设置:scripted_menu:theme.menu:menu_theme.sh" >> "$SETTINGS_MENU_FILE"
 
-echo "时区:scripted_menu:timezone.menu:menu_timezone.sh" >> "$SETTINGS_MENU_FILE"
+echo "时区设置:scripted_menu:timezone.menu:menu_timezone.sh" >> "$SETTINGS_MENU_FILE"
 
 #initialize the main menu
 #=======================================
@@ -82,22 +82,27 @@ echo "正在创建主菜单..."
 MAIN_MENU_FILE=/menu/init.menu
 
 echo "主菜单" > "$MAIN_MENU_FILE"
-echo "重启手机:reboot:*" >> "$MAIN_MENU_FILE"
+echo "重新启动:reboot:*" >> "$MAIN_MENU_FILE"
+echo "关闭手机:shell:halt.sh" >> "$MAIN_MENU_FILE"
+echo "引导模式:shell:reboot-btl.sh" >> "$MAIN_MENU_FILE"
+echo "恢复模式:shell:reboot-rcvr.sh" >> "$MAIN_MENU_FILE"
 echo "设置:menu:settings.menu" >> "$MAIN_MENU_FILE"
-echo "USB大容量存储模式:shell:usb_mass_storage.sh" >> "$MAIN_MENU_FILE"
+echo "USB 大容量存储模式:shell:usb_mass_storage.sh" >> "$MAIN_MENU_FILE"
+echo "USB 大容量存储模式(完全访问):shell:usb_mass_storage_complete_access.sh" >> "$MAIN_MENU_FILE"
 
-echo "Nandroid备份还原:menu:nand.menu" >> "$MAIN_MENU_FILE"
+echo "备份 / 还原:menu:nand.menu" >> "$MAIN_MENU_FILE"
 echo "程序菜单:menu:app.menu" >> "$MAIN_MENU_FILE"
 
 #only if not bootstrap
 if [ ! -f /etc/bootstrap ]; then
-	echo "Root手机:shell:root.sh" >> "$MAIN_MENU_FILE"
+	echo "获取权限:shell:root.sh" >> "$MAIN_MENU_FILE"
 fi
 
 echo "运行脚本:scripted_menu:runscript.menu:menu_scripts.sh" >> "$MAIN_MENU_FILE"
 echo "安装升级包:scripted_menu:customupdate.menu:menu_updates.sh" >> "$MAIN_MENU_FILE"
-echo "清除Dalvik缓存:shell:wipe_dalvik_cache.sh" >> "$MAIN_MENU_FILE"
-echo "删除全部用户数据/恢复出厂设置:wipe_data:*" >> "$MAIN_MENU_FILE"
-echo "清除缓存:wipe_cache:*" >> "$MAIN_MENU_FILE"
+echo "清除虚拟机缓存:shell:wipe_dalvik_cache.sh" >> "$MAIN_MENU_FILE"
+echo "清除全部数据(恢复出厂设置):wipe_data:*" >> "$MAIN_MENU_FILE"
+echo "清除系统缓存:wipe_cache:*" >> "$MAIN_MENU_FILE"
+echo "电池状态:scripted_menu:battery.menu:menu_battery.sh" >> "$MAIN_MENU_FILE"
 
-echo "完毕。"
+echo "完成."

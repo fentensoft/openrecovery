@@ -1,8 +1,0 @@
-#!/system/bin/sh
-
-if [ "$1" == "openrecovery" ]; then
-	touch "/cache/.boot_to_or"
-	toolbox reboot
-else
-	toolbox reboot $*
-fi

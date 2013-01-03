@@ -1,6 +1,6 @@
 #!/sbin/bash
 
-echo "Nandroid还原" > "$MENU_FILE"
+echo "还原" > "$MENU_FILE"
 echo "返回:menu:.." >> "$MENU_FILE"
 
 NAND_DIR_ADB=/sdcard/nandroid/adbrecovery

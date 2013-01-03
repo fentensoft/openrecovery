@@ -1,4 +1,4 @@
-#!/sbin/bash
+﻿#!/sbin/bash
 
 echo "$1" > /etc/theme
 echo "$1" > /sdcard/OpenRecovery/etc/theme
@@ -11,5 +11,5 @@ if [ -d /sdcard/OpenRecovery/$1 ]; then
 fi
 
 RPID=`ps | grep /sbin/recovery | awk '{print $1}'`
-echo "kill process $RPID..."
+echo "结束进程 $RPID..."
 kill -9 $RPID

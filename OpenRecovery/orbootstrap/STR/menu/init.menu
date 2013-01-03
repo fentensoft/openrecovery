@@ -1,6 +1,0 @@
-Main Menu
-Reboot System:reboot:*
-Apply Update.zip:update:SDCARD:update.zip
-Wipe Data / Factory Reset:wipe_data:*
-Wipe Cache Partition:wipe_cache:*
-

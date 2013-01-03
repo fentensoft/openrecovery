@@ -6,16 +6,13 @@ REBOOT=0
 COMPRESS=0
 
 BKP_BOOT=0
-BKP_BPSW=0
 BKP_LBL=0
 BKP_LOGO=0
-BKP_DEVTREE=0
 
 BKP_SYSTEM=0
 BKP_DATA=0
 BKP_CACHE=0
 BKP_CDROM=0
-BKP_CUST=0
 
 BKP_EXT2=0
 
@@ -30,7 +27,7 @@ FREEBLOCKS="`df -k /sdcard| grep sdcard | awk '{ print $4 }'`"
 
 echo "+----------------------------------------------+"
 echo "+                                              +"
-echo "+        Open Recovery Nandroid 备份            +"
+echo "+                   备份模式                   +"
 echo "+                                              +"
 echo "+----------------------------------------------+"
 sleep 2
@@ -49,15 +46,12 @@ fi
 
 if [ "$1" == "--all" ]; then
 	BKP_BOOT=1
-	BKP_BPSW=1
 	BKP_LBL=1
 	BKP_LOGO=1
-	BKP_DEVTREE=1
 	BKP_SYSTEM=1
 	BKP_DATA=1
 	BKP_CACHE=1
 	BKP_CDROM=1
-	BKP_CUST=1
 	BKP_EXT2=1
 	NOTHING=0
 else
@@ -82,11 +76,6 @@ else
 		NOTHING=0
 	fi
 	
-	if [ -f "$TAGPREFIX"nand_bkp_bpsw ]; then
-		BKP_BPSW=1
-		NOTHING=0
-	fi
-	
 	if [ -f "$TAGPREFIX"nand_bkp_lbl ]; then
 		BKP_LBL=1
 		NOTHING=0
@@ -97,18 +86,8 @@ else
 		NOTHING=0
 	fi
 	
-	if [ -f "$TAGPREFIX"nand_bkp_devtree ]; then
-		BKP_DEVTREE=1
-		NOTHING=0
-	fi
-	
 	if [ -f "$TAGPREFIX"nand_bkp_cdrom ]; then
 		BKP_CDROM=1
-		NOTHING=0
-	fi
-	
-	if [ -f "$TAGPREFIX"nand_bkp_cust ]; then
-		BKP_CUST=1
 		NOTHING=0
 	fi
 	
@@ -119,7 +98,7 @@ else
 fi
 
 if [ $NOTHING -eq 1 ]; then
-	echo "E:没什么要做的。"
+	echo "E: 未执行任何操作"
 	exit 1
 fi
 
@@ -132,7 +111,7 @@ mkyaffs2image=`which mkyaffs2image`
 if [ "$mkyaffs2image" == "" ]; then
 	mkyaffs2image=`which mkyaffs2image-or`
 	if [ "$mkyaffs2image" == "" ]; then
-		echo "E:mkyaffs2image or mkyaffs2image-or not found in path."
+		echo "E: 未找到 mkyaffs2image 或 mkyaffs2image-or."
 		exit 1
 	fi
 fi
@@ -141,7 +120,7 @@ dump_image=`which dump_image`
 if [ "$dump_image" == "" ]; then
 	dump_image=`which dump_image-or`
 	if [ "$dump_image" == "" ]; then
-		echo "E:dump_image or dump_image-or not found in path."
+		echo "E: 未找到 dump_image 或 dump_image-or."
 		exit 1
 	fi
 fi
@@ -154,7 +133,7 @@ if [ "$COMPRESS" == 1 ]; then
 		ENERGY=100
 	fi
 	if [ ! $ENERGY -ge 30 ]; then
-		echo "E:电量不足"      
+		echo "E: 电量不足"      
 		exit 1
 	fi
 fi
@@ -165,11 +144,11 @@ fi
 
 #require at least 400 MiB to proceed
 if [ $FREEBLOCKS -le 409600 ]; then
-	echo "E:空间不足"
-	echo "至少需要400MB"
+	echo "E: 存储空间不足"
+	echo "请确认 SD 卡上至少有 400MB 或更大的空间."
 	exit 1
 else
-	echo "SD卡上至少有400MB空间"
+	echo "请确认 SD 卡上至少有 400MB 或更大的空间."
 fi
 
 #build the prefix and check if the filesystem partitions are properly mounteable
@@ -179,20 +158,12 @@ if [ $BKP_BOOT -eq 1 ]; then
 	BACKUPLEGEND=$BACKUPLEGEND"B"
 fi
 
-if [ $BKP_BPSW -eq 1 ]; then
-	BACKUPLEGEND=$BACKUPLEGEND"W"
-fi
-
 if [ $BKP_LBL -eq 1 ]; then
 	BACKUPLEGEND=$BACKUPLEGEND"L"
 fi
 
 if [ $BKP_LOGO -eq 1 ]; then
 	BACKUPLEGEND=$BACKUPLEGEND"l"
-fi
-
-if [ $BKP_DEVTREE -eq 1 ]; then
-	BACKUPLEGEND=$BACKUPLEGEND"d"
 fi
 
 if [ $BKP_SYSTEM -eq 1 ]; then
@@ -228,17 +199,6 @@ if [ $BKP_CACHE -eq 1 ]; then
 	fi
 fi
 
-if [ $BKP_CUST -eq 1 ]; then
-	umount /cust 2> /dev/null
-	mount /cust || FAIL=1
-	
-	if [ $FAIL -eq 1 ]; then
-		BKP_CUST=0
-	else
-		BACKUPLEGEND=$BACKUPLEGEND"c"
-	fi
-fi
-
 if [ $BKP_CDROM -eq 1 ]; then
 	umount /cdrom 2> /dev/null
 	mount /cdrom || FAIL=1
@@ -268,12 +228,12 @@ DESTDIR="$BACKUPPATH/$BACKUPPREFIX$BACKUPLEGEND$TIMESTAMP"
 if [ ! -d $DESTDIR ]; then 
 	mkdir -p $DESTDIR
 	if [ ! -d $DESTDIR ]; then 
-		echo "E:无法创建$DESTDIR ."
+		echo "E: 无法创建$DESTDIR ."
 		exit 1
 	fi
 fi
 
-echo "备份到目录:"
+echo "备份至:"
 echo "$DESTDIR"
 
 CWD=$PWD
@@ -283,25 +243,25 @@ cd $DESTDIR
 # Backup the non-filesystem partitions
 #===============================================================================
 
-for image in boot bpsw lbl logo devtree; do
+for image in boot lbl logo; do
 	case $image in
 		boot)
 			if [ $BKP_BOOT -eq 0 ]; then
-				echo "boot: 跳过"
+				echo "内核(boot): 已跳过."
 				continue
 			fi
 			;;
 			
 		lbl)
 			if [ $BKP_LBL -eq 0 ]; then
-				echo "bootloader: 跳过"
+				echo "引导(bootloader): 已跳过."
 				continue
 			fi
 			;;
 			
 		logo)
 			if [ $BKP_LOGO -eq 0 ]; then
-				echo "logo: 跳过"
+				echo "标志(logo): 已跳过."
 				continue
 			fi
 			;;
@@ -311,7 +271,7 @@ for image in boot bpsw lbl logo devtree; do
 	DEVICEMD5=`$dump_image $image - | md5sum | awk '{ print $1 }'`
 	sleep 1s
 	MD5RESULT=1
-	echo -n "${image}: 备份中..."
+	echo -n "${image}: 正在备份..."
 	ATTEMPT=0
 	
 	while [ $MD5RESULT -eq 1 ]; do
@@ -327,7 +287,7 @@ for image in boot bpsw lbl logo devtree; do
 		
 		if [ "$ATTEMPT" == "5" ]; then
 			echo "failed"
-			echo "E:Fatal error while trying to dump $image, aborting."
+			echo "E: 备份 $image 时发生严重错误, 已终止."
 			exit 1
 		fi
 	done
@@ -335,7 +295,7 @@ for image in boot bpsw lbl logo devtree; do
 	echo "完成"
 	
 	#generate the md5 sum
-	echo -n "${image}: 生成MD5..."
+	echo -n "${image}: 正在创建校验文件..."
 	md5sum $image.img > $image.md5
 	echo "完成"
 	
@@ -345,44 +305,44 @@ done
 # Backup the yaffs2 filesystem partitions
 #===============================================================================
 
-for image in system data cache cust cdrom; do
+for image in system data cache cdrom; do
 	case $image in
 		system)
 			if [ $BKP_SYSTEM -eq 0 ]; then
-				echo "system: 跳过"
+				echo "系统(system): 已跳过."
 				continue
 			fi
 			;;
 		  
 		data)
 			if [ $BKP_DATA -eq 0 ]; then
-				echo "data: 跳过"
+				echo "数据(data): 已跳过."
 				continue
 			fi
 			;;
 		  
 		cache)
 			if [ $BKP_CACHE -eq 0 ]; then
-				echo "cache: 跳过"
+				echo "缓存(cache): 已跳过."
 				continue
 			fi
 			;;
 		
 		cdrom)
 			if [ $BKP_CDROM -eq 0 ]; then
-				echo "cdrom: 跳过"
+				echo "CD-Rom: 已跳过."
 				continue
 			fi
 			;;    
 	esac
 	
-	echo -n "${image}: 备份中..."
+	echo -n "${image}: 正在备份..."
 	$mkyaffs2image /$image $DESTDIR/$image.img > /dev/null 2> /dev/null
 	sync
 	echo "完成"
 	
 	#generate the md5 sum
-	echo -n "${image}: 生成MD5..."
+	echo -n "${image}: 正在创建校验文件..."
 	md5sum $image.img > $image.md5
 	echo "完成"
 	
@@ -393,12 +353,12 @@ done
 #===============================================================================
 
 if [ $BKP_EXT2 -eq 1 ]; then
-	echo -n "ext2: 检查中..."
+	echo -n "SD 卡分区(ext2): 正在检查..."
 	umount /sddata 2> /dev/null
 	e2fsck -fp /dev/block/mmcblk0p2 > /dev/null
 	echo "完成"
 	mount /sddata
-	echo -n "ext2: 备份中..."
+	echo -n "SD 卡分区(ext2): 正在备份..."
 	CW2=$PWD
 	cd /sddata
 	tar -cvf $DESTDIR/ext2.tar ./ > /dev/null
@@ -406,11 +366,11 @@ if [ $BKP_EXT2 -eq 1 ]; then
 	echo "完成"
 	
 	#generate the md5 sum
-	echo -n "ext2: 生成MD5..."
+	echo -n "SD 卡分区(ext2): 正在创建校验文件..."
 	md5sum ext2.tar > ext2.md5
 	echo "完成"
 else
-	echo "ext2: 跳过"
+	echo "SD 卡分区(ext2): 已跳过."
 fi
 
 
@@ -421,11 +381,11 @@ fi
 if [ $COMPRESS -eq 1 ]; then
 	# we need about 70MiB for the intermediate storage needs
 	if [ $FREEBLOCKS -le 71680 ]; then
-		echo "E:没有足够的空间来压缩备份包(至少70MB)"
-		echo "该备份包未压缩"
+		echo "E: 没有足够的空间来压缩备份文件(至少需要 70MB)"
+		echo "备份文件未压缩"
 		exit 1
 	else
-		echo -n "压缩备份包，可能需要一段时间，请稍等"
+		echo -n "正在压缩备份文件，请稍等..."
 		# we are already in $DESTDIR, start compression from the smallest files
 		# to maximize space for the largest's compression, less likely to fail.
 		# To decompress reverse the order.

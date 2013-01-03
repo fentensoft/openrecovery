@@ -1,5 +1,8 @@
 #!/sbin/bash
 
+umount /sdcard
+umount /sddata
+
 if [ "$1" == "openrecovery" ]; then
 	touch "/cache/.boot_to_or"
 	coolbox reboot
