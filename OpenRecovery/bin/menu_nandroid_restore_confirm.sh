@@ -17,7 +17,7 @@ echo "分区:break:*" >> "$MENU_FILE"
 CWD=$PWD
 cd "$1"
 
-for image in system data cache cust cdrom boot bpsw lbl logo devtree ext2; do
+for image in system data cache cdrom boot lbl logo ext2; do
 	if [ `ls $image* 2>/dev/null | wc -l` == 0 ]; then
   	continue
   fi

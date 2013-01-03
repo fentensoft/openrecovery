@@ -26,33 +26,6 @@ then
 	done
 fi
 
-#initialize the application menu
-#=======================================
-
-export APP_MENU_FILE="/menu/app.menu"
-
-echo "程序菜单" > "$APP_MENU_FILE"
-echo "返回:menu:.." >> "$APP_MENU_FILE"
-
-if [ -d /sdcard/OpenRecovery/app/ ]
-then
-
-	mkdir /app
-	cp -fR /sdcard/OpenRecovery/app/ /
-	chmod -R 0755 /app
-	
-	APP_DIR=/app
-
-	for APPINIT in "$APP_DIR/"*.sh; do
-		#omit if there is none
-		if [ "$APPINIT" != "$APP_DIR/*.sh" ]
-		then
-			BN_APPINIT=`basename "$APPINIT"`
-			"$APPINIT"
-		fi
-	done
-fi
-
 #initialize the Nandroid menu
 #=======================================
 export NAND_MENU_FILE="/menu/nand.menu"
@@ -71,7 +44,6 @@ echo "系统设置" > "$SETTINGS_MENU_FILE"
 echo "返回:menu:.." >> "$SETTINGS_MENU_FILE"
 echo "Bash 设置:scripted_menu:bash.menu:menu_bash.sh" >> "$SETTINGS_MENU_FILE"
 echo "主题设置:scripted_menu:theme.menu:menu_theme.sh" >> "$SETTINGS_MENU_FILE"
-
 echo "时区设置:scripted_menu:timezone.menu:menu_timezone.sh" >> "$SETTINGS_MENU_FILE"
 
 #initialize the main menu
@@ -81,7 +53,11 @@ echo "正在创建主菜单..."
 
 MAIN_MENU_FILE=/menu/init.menu
 
+KERNEL_VERSION=`uname -r`
+
 echo "主菜单" > "$MAIN_MENU_FILE"
+echo "内核版本 ${KERNEL_VERSION}" > "$MAIN_MENU_FILE"
+
 echo "重新启动:reboot:*" >> "$MAIN_MENU_FILE"
 echo "关闭手机:shell:halt.sh" >> "$MAIN_MENU_FILE"
 echo "引导模式:shell:reboot-btl.sh" >> "$MAIN_MENU_FILE"
@@ -91,12 +67,8 @@ echo "USB 大容量存储模式:shell:usb_mass_storage.sh" >> "$MAIN_MENU_FILE"
 echo "USB 大容量存储模式(完全访问):shell:usb_mass_storage_complete_access.sh" >> "$MAIN_MENU_FILE"
 
 echo "备份 / 还原:menu:nand.menu" >> "$MAIN_MENU_FILE"
-echo "程序菜单:menu:app.menu" >> "$MAIN_MENU_FILE"
 
-#only if not bootstrap
-if [ ! -f /etc/bootstrap ]; then
-	echo "获取权限:shell:root.sh" >> "$MAIN_MENU_FILE"
-fi
+echo "获取权限:shell:root.sh" >> "$MAIN_MENU_FILE"
 
 echo "运行脚本:scripted_menu:runscript.menu:menu_scripts.sh" >> "$MAIN_MENU_FILE"
 echo "安装升级包:scripted_menu:customupdate.menu:menu_updates.sh" >> "$MAIN_MENU_FILE"

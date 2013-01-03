@@ -18,27 +18,6 @@ INSTALL_COMMAND=0
 EMMC=0
 ROOT="/"
 
-if [ "$1" == "STCU" ]; then
-	NOCUST=1
-else
-	NOCUST=0
-	
-	if [ "$1" == "SHOLS" ]; then
-		INSTALL_COMMAND=1
-# fstab has to be patched only after 2ndboot so for now let's set EMMC to 1 
-		EMMC=1
-		ROOT="/cache/OpenRecovery/"
-		mkdir /cache/OpenRecovery
-		mkdir ${ROOT}etc
-    cp -fR /sbin ${ROOT}
-	fi
-fi
-
-if [ "$1" == "JRD" ]; then
-	NOCUST=1
-	EMMC=1
-fi
-
 #post-installation
 #===============================================================================
 
@@ -57,11 +36,6 @@ fi
 
 mkdir /cdrom
 chmod 0755 /cdrom
-
-if [ $NOCUST -eq 0 ]; then
-	mkdir /cust
-	chmod 0755 /cust
-fi
 
 #fstab
 cp -f "/sdcard/OpenRecovery/etc/fstab.$1" ${ROOT}etc/fstab
@@ -119,15 +93,6 @@ if [ $EMMC -eq 0 ]; then
 	sed -i "s/MTDBLOCKCDROM/$MTDBLOCK_CDROM/g" /etc/fstab
 	sed -i "s/MTDBLOCKCACHE/$MTDBLOCK_CACHE/g" /etc/fstab
 	
-	if [ $NOCUST -eq 0 ]; then
-	
-		MTDBLOCK_CUST=$(/sbin/cat /proc/mtd | /sbin/grep "cust")
-		MTDBLOCK_CUST=${MTDBLOCK_CUST%%:*}
-		MTDBLOCK_CUST=${MTDBLOCK_CUST##mtd}
-		MTDBLOCK_CUST="\/dev\/block\/mtdblock$MTDBLOCK_CUST"
-		
-		sed -i "s/MTDBLOCKCUST/$MTDBLOCK_CUST/g" /etc/fstab
-	fi
 fi
 
 #terminfo
@@ -142,7 +107,6 @@ chmod 0755 ${ROOT}sbin/battd
 
 cp -f /sdcard/OpenRecovery/sbin/linker ${ROOT}sbin/linker
 chmod 0755 ${ROOT}sbin/linker
-
 
 #Nandroid
 cp -f /sdcard/OpenRecovery/sbin/dump_image-or ${ROOT}sbin/dump_image-or
@@ -209,9 +173,6 @@ rm ${ROOT}bin/switch.sh
 mkdir ${ROOT}lib
 cp -fR /sdcard/OpenRecovery/lib/ $ROOT
 chmod -R 0644 ${ROOT}lib
-
-#chek linux version
-LVER=`uname -r | awk '{split($0,a,"-"); print a[1]}'`
 
 #ext2/3/4 partition on sdcard
 if [ -b /dev/block/mmcblk0p2 ]; then

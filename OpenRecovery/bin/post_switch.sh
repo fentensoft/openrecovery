@@ -31,16 +31,10 @@ rm -R /cache/OpenRecovery
 	MTDBLOCK_CACHE=${MTDBLOCK_CACHE##mtd}
 	MTDBLOCK_CACHE="\/dev\/block\/mtdblock$MTDBLOCK_CACHE"
 	
-	MTDBLOCK_CUST=$(/sbin/cat /proc/mtd | /sbin/grep "cust")
-	MTDBLOCK_CUST=${MTDBLOCK_CUST%%:*}
-	MTDBLOCK_CUST=${MTDBLOCK_CUST##mtd}
-	MTDBLOCK_CUST="\/dev\/block\/mtdblock$MTDBLOCK_CUST"
-	
 	sed -i "s/MTDBLOCKSYSTEM/$MTDBLOCK_SYSTEM/g" /etc/fstab
 	sed -i "s/MTDBLOCKDATA/$MTDBLOCK_DATA/g" /etc/fstab
 	sed -i "s/MTDBLOCKCDROM/$MTDBLOCK_CDROM/g" /etc/fstab
 	sed -i "s/MTDBLOCKCACHE/$MTDBLOCK_CACHE/g" /etc/fstab
-	sed -i "s/MTDBLOCKCUST/$MTDBLOCK_CUST/g" /etc/fstab
 	
 #ext2/3/4 partition on sdcard
 	if [ -b /dev/block/mmcblk0p2 ]; then
