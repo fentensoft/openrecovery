@@ -108,6 +108,9 @@ chmod 0755 ${ROOT}sbin/battd
 cp -f /sdcard/OpenRecovery/sbin/linker ${ROOT}sbin/linker
 chmod 0755 ${ROOT}sbin/linker
 
+cp -f /sdcard/OpenRecovery/sbin/sshot ${ROOT}sbin/sshot
+chmod 0755 ${ROOT}sbin/sshot
+
 #Nandroid
 cp -f /sdcard/OpenRecovery/sbin/dump_image-or ${ROOT}sbin/dump_image-or
 chmod 0755 ${ROOT}sbin/dump_image-or
