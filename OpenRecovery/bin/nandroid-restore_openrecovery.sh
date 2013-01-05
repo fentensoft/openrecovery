@@ -26,11 +26,11 @@ FREEBLOCKS="`df -k /sdcard| grep sdcard | awk '{ print $4 }'`"
 #error
 ERROR=""
 
-echo "+----------------------------------------------+"
-echo "+                                              +"
-echo "+                   恢复模式                   +"
-echo "+                                              +"
-echo "+----------------------------------------------+"
+echo "+------------------------------------------+"
+echo "+                                          +"
+echo "+               恢 复 模 式                +"
+echo "+                                          +"
+echo "+------------------------------------------+"
 sleep 2
 
 #===============================================================================
@@ -195,7 +195,7 @@ fi
 
 for image in boot lbl logo; do
 	if [ ! -f $image.img* ]; then
-		echo "${image}: 无法执行备份."
+		echo "${image}: 无法执行恢复."
 		continue
 	fi
 	
@@ -279,7 +279,7 @@ done
 
 for image in system data cache cdrom; do
 	if [ ! -f $image.img* ]; then
-		echo "${image}: 无法执行备份."
+		echo "${image}: 无法执行恢复."
 		continue
 	fi
 	
@@ -364,7 +364,7 @@ for image in system data cache cdrom; do
 	
 	if [ "$image" == "system" ]; then
 		if [ -d /system/persistent ]; then
-			echo -n "${image}: 正在备份..."
+			echo -n "${image}: 正在恢复..."
 			
 			mkdir /system_persistent > /dev/null
 			cp -a /system/persistent /system_persistent > /dev/null
@@ -428,7 +428,7 @@ done
 #===============================================================================
 
 if [ ! -f ext2.tar ]; then
-	echo "SD 卡分区(ext2): 无法执行备份."
+	echo "SD 卡分区(ext2): 无法执行恢复."
 else 
 	if [ $REST_EXT2 -eq 0 ]; then
 		echo "SD 卡分区(ext2): 已跳过."
