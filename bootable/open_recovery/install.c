@@ -193,7 +193,7 @@ handle_or_update(const char *path, ZipArchive *zip)
 static int
 try_update_binary(const char *path, ZipArchive *zip) 
 {
-	int	custom_binary = 0;
+	//int	custom_binary = 0;
 
 	const ZipEntry* or_script_entry =
 		      mzFindZipEntry(zip, ASSUMED_OR_UPDATE_SCRIPT_NAME);
@@ -204,18 +204,18 @@ try_update_binary(const char *path, ZipArchive *zip)
 		return handle_or_update(path, zip);
 	}
 
-	const ZipEntry* binary_entry =
+	/*const ZipEntry* binary_entry =
 		      mzFindZipEntry(zip, ASSUMED_UPDATE_BINARY_NAME);
 
 	if (binary_entry == NULL)
 		ui_print("使用默认的updater...\n");
 	else
-		custom_binary = 1;
+		custom_binary = 1;*/
   
   char* binary = "/tmp/update_binary";
   unlink(binary);
   
-  if (custom_binary)
+  /*if (custom_binary)
   {
 		int fd = creat(binary, 0755);
 		if (fd < 0) 
@@ -233,7 +233,7 @@ try_update_binary(const char *path, ZipArchive *zip)
 	    return 1;
 		}
 	}
-	else
+	else*/
 		binary = DEFAULT_UPDATE_BINARY_NAME;
 
 	ui_show_indeterminate_progress();
