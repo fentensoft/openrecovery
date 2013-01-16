@@ -117,10 +117,8 @@ chmod 0755 ${ROOT}sbin/dump_image-or
 ln -s /sbin/dump_image-or ${ROOT}sbin/dump_image
 chmod 0755 dump_image
 
-cp -f /sdcard/OpenRecovery/sbin/e2fsck-or ${ROOT}sbin/e2fsck-or
-chmod 0755 ${ROOT}sbin/e2fsck-or
-ln -s /sbin/e2fsck-or ${ROOT}sbin/e2fsck
-chmod 0755 e2fsck
+cp -f /sdcard/OpenRecovery/sbin/e2fsck ${ROOT}sbin/e2fsck
+chmod 0755 ${ROOT}sbin/e2fsck
 
 cp -f /sdcard/OpenRecovery/sbin/tune2fs ${ROOT}sbin/tune2fs
 chmod 0755 ${ROOT}sbin/tune2fs
@@ -180,10 +178,13 @@ chmod -R 0644 ${ROOT}lib
 #ext2/3/4 partition on sdcard
 if [ -b /dev/block/mmcblk0p2 ]; then
 	mkdir /sddata
-	insmod "/sdcard/OpenRecovery/lib/modules/jbd2.ko"
-	insmod "/sdcard/OpenRecovery/lib/modules/ext4.ko"
+	chmod 0755 /sddata
+	ln -s /sddata /sd-ext
+	insmod "${ROOT}lib/modules/jbd2.ko"
+	insmod "${ROOT}lib/modules/ext4.ko"
 	echo "/dev/block/mmcblk0p2          /sddata         auto            defaults        0 0" >> /etc/fstab
-	e2fsck -p /dev/block/mmcblk0p2 
+	e2fsck -p /dev/block/mmcblk0p2
+	mount /sddata
 fi
 
 #res - read the theme first
@@ -224,8 +225,6 @@ cp -fR /sdcard/OpenRecovery/tags/ $ROOT
 #Launch Open Recovery
 #==============================================================================
 
-#rm /cache/recovery/command
-rm /cache/OpenRecovery/sbin/recovery
 
 cp -f "/sdcard/OpenRecovery/sbin/open_rcvr."$1 ${ROOT}sbin/recovery
 chmod 0755 ${ROOT}sbin/recovery

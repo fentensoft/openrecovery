@@ -8,8 +8,8 @@ echo "选项：$BACKUP_NAME" > "$MENU_FILE"
 echo "返回:menu:.." >> "$MENU_FILE"
 echo "还原全部:shell:nandroid-restore_openrecovery.sh \"$1\" --all" >> "$MENU_FILE"
 echo "还原选择项:shell:nandroid-restore_openrecovery.sh \"$1\"" >> "$MENU_FILE"
-echo "还原全部(不效验 md5):shell:nandroid-restore_openrecovery1.sh \"$1\" --all" >> "$MENU_FILE"
-echo "还原选择项(不效验 md5):shell:nandroid-restore_openrecovery1.sh \"$1\"" >> "$MENU_FILE"
+echo "还原全部(不效验 md5):shell:nandroid-restore_openrecovery_withoutmd5.sh \"$1\" --all" >> "$MENU_FILE"
+echo "还原选择项(不效验 md5):shell:nandroid-restore_openrecovery_withoutmd5.sh \"$1\"" >> "$MENU_FILE"
 echo "设置:break:*" >> "$MENU_FILE"
 echo "完成后重启:tag:nand_rest_autoreboot" >> "$MENU_FILE"
 echo "分区:break:*" >> "$MENU_FILE"
@@ -17,7 +17,7 @@ echo "分区:break:*" >> "$MENU_FILE"
 CWD=$PWD
 cd "$1"
 
-for image in system data cache cdrom boot lbl logo ext2; do
+for image in system data cache cdrom boot lbl logo ext; do
 	if [ `ls $image* 2>/dev/null | wc -l` == 0 ]; then
   	continue
   fi
@@ -44,8 +44,8 @@ for image in system data cache cdrom boot lbl logo ext2; do
     logo)
 				echo "标志(Logo):tag:nand_rest_logo" >> "$MENU_FILE"
 			;;
-    ext2)
-				echo "SD 卡分区(ext2):tag:nand_rest_ext2" >> "$MENU_FILE"
+    ext)
+				echo "SD 卡分区(ext):tag:nand_rest_ext2" >> "$MENU_FILE"
 			;;
   esac
   

@@ -1,9 +1,13 @@
 #!/sbin/bash
 
-#kill all services first
-killall -9 adbd
+#set display brightness
+if [ -f /sdcard/OpenRecovery/etc/brightness ] ; then
+    cat /sdcard/OpenRecovery/etc/brightness > /sys/class/leds/lcd-backlight/brightness
+fi
+# toggle adb function to get correct initial usb state 
+echo 0 > /sys/class/usb_composite/adb/enable 
+echo 1 > /sys/class/usb_composite/adb/enable
 killall -9 recovery
-echo "msc_adb" > /dev/usb_device_mode &
 
 #then continue with the remains
 killall -9 sleep

@@ -27,7 +27,7 @@ FREEBLOCKS="`df -k /sdcard| grep sdcard | awk '{ print $4 }'`"
 
 echo "+------------------------------------------+"
 echo "+                                          +"
-echo "+               备 份 模 式                +"
+echo "+               备 份 模 式                 +"
 echo "+                                          +"
 echo "+------------------------------------------+"
 sleep 2
@@ -353,24 +353,24 @@ done
 #===============================================================================
 
 if [ $BKP_EXT2 -eq 1 ]; then
-	echo -n "SD 卡分区(ext2): 正在检查..."
+	echo -n "SD 卡分区(ext): 正在检查..."
 	umount /sddata 2> /dev/null
 	e2fsck -fp /dev/block/mmcblk0p2 > /dev/null
 	echo "完成"
 	mount /sddata
-	echo -n "SD 卡分区(ext2): 正在备份..."
+	echo -n "SD 卡分区(ext): 正在备份..."
 	CW2=$PWD
 	cd /sddata
-	tar -cvf $DESTDIR/ext2.tar ./ > /dev/null
+	tar -cvf $DESTDIR/ext.tar ./ > /dev/null
 	cd $CW2
 	echo "完成"
 	
 	#generate the md5 sum
-	echo -n "SD 卡分区(ext2): 正在创建校验文件..."
-	md5sum ext2.tar > ext2.md5
+	echo -n "SD 卡分区(ext): 正在创建校验文件..."
+	md5sum ext.tar > ext.md5
 	echo "完成"
 else
-	echo "SD 卡分区(ext2): 已跳过."
+	echo "SD 卡分区(ext): 已跳过."
 fi
 
 

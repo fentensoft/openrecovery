@@ -55,48 +55,48 @@ handle_firmware_update(char* type, char* filename, ZipArchive* zip) {
     if (strncmp(filename, "PACKAGE:", 8) == 0) {
         entry = mzFindZipEntry(zip, filename+8);
         if (entry == NULL) {
-            LOGE("Failed to find \"%s\" in package", filename+8);
+            LOGE("从升级包中查找\"%s\"失败", filename+8);
             return INSTALL_ERROR;
         }
         data_size = entry->uncompLen;
     } else {
         struct stat st_data;
         if (stat(filename, &st_data) < 0) {
-            LOGE("Error stat'ing %s: %s\n", filename, strerror(errno));
+            LOGE("错误说明 %s: %s\n", filename, strerror(errno));
             return INSTALL_ERROR;
         }
         data_size = st_data.st_size;
     }
 
-    LOGI("type is %s; size is %d; file is %s\n",
+    LOGI("类型:%s; 大小:%d; 文件:%s\n",
          type, data_size, filename);
 
     char* data = malloc(data_size);
     if (data == NULL) {
-        LOGI("Can't allocate %d bytes for firmware data\n", data_size);
+        LOGI("无法分配%d字节的固件数据\n", data_size);
         return INSTALL_ERROR;
     }
 
     if (entry) {
         if (mzReadZipEntry(zip, entry, data, data_size) == false) {
-            LOGE("Failed to read \"%s\" from package", filename+8);
+            LOGE("无法从升级包中读取\"%s\"", filename+8);
             return INSTALL_ERROR;
         }
     } else {
         FILE* f = fopen(filename, "rb");
         if (f == NULL) {
-            LOGE("Failed to open %s: %s\n", filename, strerror(errno));
+            LOGE("无法打开 %s: %s\n", filename, strerror(errno));
             return INSTALL_ERROR;
         }
         if (fread(data, 1, data_size, f) != data_size) {
-            LOGE("Failed to read firmware data: %s\n", strerror(errno));
+            LOGE("无法读取固件数据: %s\n", strerror(errno));
             return INSTALL_ERROR;
         }
         fclose(f);
     }
 
     if (remember_firmware_update(type, data, data_size)) {
-        LOGE("Can't store %s image\n", type);
+        LOGE("无法存储镜像%s\n", type);
         free(data);
         return INSTALL_ERROR;
     }
@@ -151,7 +151,7 @@ static int
 handle_or_update(const char *path, ZipArchive *zip)
 {
 	//first, extract everything
-	ui_print("Extracting archive...\n");
+	ui_print("解压缩升级包...\n");
 	
 	char cmd[512];
 	
@@ -161,7 +161,7 @@ handle_or_update(const char *path, ZipArchive *zip)
 	
 	if (mkdir_recursive(OR_UPDATE_EXTRACT_DIR_NAME))
 	{
-		LOGE("Failed creating: "OR_UPDATE_EXTRACT_DIR_NAME"\n");
+		LOGE("创建失败: "OR_UPDATE_EXTRACT_DIR_NAME"\n");
 		return INSTALL_ERROR;
 	}
 	
@@ -169,7 +169,7 @@ handle_or_update(const char *path, ZipArchive *zip)
 
 	if (!ok) 
 	{
-    LOGE("Failed extracting the archive.\n");
+    LOGE("无法解压缩升级包.\n");
     
     //clear it
     sprintf(cmd, "rm -rf %s", OR_UPDATE_EXTRACT_DIR_NAME); 
@@ -200,7 +200,7 @@ try_update_binary(const char *path, ZipArchive *zip)
 		      
 	if (or_script_entry != NULL)
 	{
-		ui_print("Using shell script...\n");
+		ui_print("使用shell脚本...\n");
 		return handle_or_update(path, zip);
 	}
 
@@ -208,7 +208,7 @@ try_update_binary(const char *path, ZipArchive *zip)
 		      mzFindZipEntry(zip, ASSUMED_UPDATE_BINARY_NAME);
 
 	if (binary_entry == NULL)
-		ui_print("Using default updater...\n");
+		ui_print("使用默认的updater...\n");
 	else
 		custom_binary = 1;
   
@@ -220,7 +220,7 @@ try_update_binary(const char *path, ZipArchive *zip)
 		int fd = creat(binary, 0755);
 		if (fd < 0) 
 		{
-		  LOGE("Can't make %s\n", binary);
+		  LOGE("无法制作%s\n", binary);
 		  return 1;
 		}
   
@@ -229,7 +229,7 @@ try_update_binary(const char *path, ZipArchive *zip)
 
 		if (!ok) 
 		{
-	    LOGE("Can't copy %s\n", ASSUMED_UPDATE_BINARY_NAME);
+	    LOGE("无法复制%s\n", ASSUMED_UPDATE_BINARY_NAME);
 	    return 1;
 		}
 	}
@@ -286,7 +286,7 @@ try_update_binary(const char *path, ZipArchive *zip)
   {
     close(pipefd[0]);
     execv(binary, args);
-    fprintf(stderr, "E:Can't run %s (%s)\n", binary, strerror(errno));
+    fprintf(stderr, "E:无法运行%s (%s)\n", binary, strerror(errno));
     _exit(-1);
   }
   close(pipefd[1]);
@@ -328,7 +328,7 @@ try_update_binary(const char *path, ZipArchive *zip)
       if (type != NULL && filename != NULL) 
       {
         if (firmware_type != NULL) 
-            LOGE("ignoring attempt to do multiple firmware updates");
+            LOGE("忽略试图进行多个固件更新");
         else 
         {
           firmware_type = strdup(type);
@@ -345,7 +345,7 @@ try_update_binary(const char *path, ZipArchive *zip)
         ui_print("\n");       
     }
     else 
-      LOGE("unknown command [%s]\n", command);   
+      LOGE("未知命令[%s]\n", command);   
   }
   
   fclose(from_child);
@@ -354,7 +354,7 @@ try_update_binary(const char *path, ZipArchive *zip)
   waitpid(pid, &status, 0);
   if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) 
   {
-    LOGE("Error in %s\n(Status %d)\n", path, WEXITSTATUS(status));
+    LOGE("错误!代码%s\n(Status %d)\n", path, WEXITSTATUS(status));
     return INSTALL_ERROR;
   }
 
@@ -369,7 +369,7 @@ static int
 handle_update_package(const char *path, ZipArchive *zip)
 {
     // Update should take the rest of the progress bar.
-    ui_print("Installing update...\n");
+    ui_print("安装升级包...\n");
 
     int result = try_update_binary(path, zip);
     register_package_root(NULL, NULL);  // Unregister package root
@@ -386,7 +386,7 @@ void run_shell_script(const char *command, int stdoutToUI, char** extra_env_vari
 	
 	//add the command
 	argp[2] = (char *)command;
-	fprintf(stderr, "Running Shell Script: \"%s\"\n", command);
+	fprintf(stderr, "执行Shell脚本中: \"%s\"\n", command);
 	
 	//interactive menu shared memory node
 	int imenu_fd = 0;
@@ -401,8 +401,8 @@ void run_shell_script(const char *command, int stdoutToUI, char** extra_env_vari
   	if((imenu_fd = open(INTERACTIVE_MENU_SHM, (O_CREAT | O_RDWR),
 				             666)) < 0 ) 
 		{
-			LOGE("Failed opening the shared memory node for interactive menu.\n");
-			LOGE("Interactive menu disabled.\n");
+			LOGE("为交互式菜单打开共享内存的节点失败.\n");
+			LOGE("禁用交互式菜单.\n");
 		}
 		else
 		{
@@ -410,8 +410,8 @@ void run_shell_script(const char *command, int stdoutToUI, char** extra_env_vari
 			if ((interactive_menu = ((interactive_menu_struct*) mmap(0, sizeof(interactive_menu_struct), (PROT_READ | PROT_WRITE),
                    MAP_SHARED, imenu_fd, 0))) == MAP_FAILED)
 			{
-				LOGE("Failed opening the shared memory node for interactive menu.\n");
-				LOGE("Interactive menu disabled.\n");
+				LOGE("为交互式菜单打开共享内存的节点失败.\n");
+				LOGE("禁用交互式菜单.\n");
 				interactive_menu = NULL;
 			}
 			else
@@ -438,14 +438,14 @@ void run_shell_script(const char *command, int stdoutToUI, char** extra_env_vari
 		{
 			while (*extra_env_variables)
 			{
-				fprintf(stderr, "run_shell_script: child env variable %s\n", *extra_env_variables);
+				fprintf(stderr, "run_shell_script: 子环境变量 %s\n", *extra_env_variables);
 				putenv(*extra_env_variables);
 				extra_env_variables++;
 			}
 		}
 		
 		execv(PHONE_SHELL, argp);
-		fprintf(stderr, "run_shell_script: execv failed: %s\n", strerror(errno));
+		fprintf(stderr, "run_shell_script: 停止执行失败: %s\n", strerror(errno));
 		_exit(1);
 	}
 	
@@ -470,7 +470,7 @@ void run_shell_script(const char *command, int stdoutToUI, char** extra_env_vari
   		if (interactive_menu != NULL && interactive_menu->in_trigger)
   		{
   			interactive_menu->in_trigger = 0;
-  			fprintf(stderr, "run_shell_script: interactive_menu triggered\n");
+  			fprintf(stderr, "run_shell_script: 交互式菜单触发.\n");
   			//first print the rest, but don't bother if there is an error
   			int rv = read(script_pipefd[0], buffer, 1024);	
   			if (rv > 0)
@@ -495,7 +495,7 @@ void run_shell_script(const char *command, int stdoutToUI, char** extra_env_vari
 				
 				//show the menu
 				ui_led_toggle(0);
-				fprintf(stderr, "run_shell_script: showing interactive menu\n");
+				fprintf(stderr, "run_shell_script: 显示交互式菜单.\n");
 				int chosen_item = show_interactive_menu(headers, items);
         ui_led_blink(1);
         
@@ -527,7 +527,7 @@ void run_shell_script(const char *command, int stdoutToUI, char** extra_env_vari
   				continue;
   			}
   			
-  			fprintf(stderr, "run_shell_script: there was a read error %d.\n", errno);
+  			fprintf(stderr, "run_shell_script: 存在读取错误 %d.\n", errno);
   			waitpid(child, &sts, 0);
   			break;
   		}
@@ -575,22 +575,22 @@ int
 install_package(const char *root_path)
 {
     ui_set_background(BACKGROUND_ICON_INSTALLING);
-    ui_print("Finding update package...\n");
-    LOGI("Update location: %s\n", root_path);
+    ui_print("查找升级包中...\n");
+    LOGI("升级点: %s\n", root_path);
 
     if (ensure_root_path_mounted(root_path) != 0) {
-        LOGE("Can't mount %s\n", root_path);
+        LOGE("无法挂载 %s\n", root_path);
         return INSTALL_CORRUPT;
     }
 
     char path[PATH_MAX] = "";
     if (translate_root_path(root_path, path, sizeof(path)) == NULL) {
-        LOGE("Bad path %s\n", root_path);
+        LOGE("错误路径 %s\n", root_path);
         return INSTALL_CORRUPT;
     }
 
-    ui_print("Opening update package...\n");
-    LOGI("Update file path: %s\n", path);
+    ui_print("打开升级包中...\n");
+    LOGI("升级文件路径: %s\n", path);
 
     /* Try to open the package.
      */
@@ -598,7 +598,7 @@ install_package(const char *root_path)
     ZipArchive zip;
     err = mzOpenZipArchive(path, &zip);
     if (err != 0) {
-        LOGE("Can't open %s\n(%s)\n", path, err != -1 ? strerror(err) : "bad");
+        LOGE("无法打开%s\n(%s)\n", path, err != -1 ? strerror(err) : "bad");
         return INSTALL_CORRUPT;
     }
 

@@ -18,5 +18,5 @@ echo "标志(Logo):tag:nand_bkp_logo" >> "$MENU_FILE"
 
 #use /sddata to see, as the nandroid is configured to mount /sddata
 if [ -d /sddata ]; then
-	echo "SD数据(ext2):tag:nand_bkp_ext2" >> "$MENU_FILE"
+	echo "SD 卡分区(ext):tag:nand_bkp_ext2" >> "$MENU_FILE"
 fi

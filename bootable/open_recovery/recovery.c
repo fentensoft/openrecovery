@@ -171,6 +171,7 @@ static const char *FULL_PACKAGE_FILE = "SDCARD:OpenRecovery.zip";
 static char* BASE_MENU_TITLE[] = {"摩托罗拉 "OPEN_RECOVERY_PHONE" 恢复系统",
 				OPEN_RECOVERY_VERSION,
 				"作者: Skrilax_CZ, fentensoft",
+				"Mod: 89luca89, Azhad, Moon",
 				"汉化: Wudimobile",
 				"",
 				OPEN_RECOVERY_NAVIG,
@@ -377,7 +378,7 @@ erase_root(const char *root)
 {
   ui_set_background(BACKGROUND_ICON_INSTALLING);
   ui_show_indeterminate_progress();
-  ui_print("正在格式化 %s...\n", root);
+  ui_print("正在清除 %s...\n", root);
   return format_root_device(root);
 }
 
@@ -906,7 +907,7 @@ prompt_and_wait()
         break;
 
       case ITEM_WIPE_CACHE:
-        ui_print("\n-- 正在清除缓存(cache)...\n");
+        ui_print("\n-- 正在清除缓存(CACHE)...\n");
 				ui_led_blink(1);
         erase_root("CACHE:");
         ensure_common_roots_mounted();

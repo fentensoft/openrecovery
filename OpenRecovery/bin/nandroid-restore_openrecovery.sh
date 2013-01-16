@@ -28,7 +28,7 @@ ERROR=""
 
 echo "+------------------------------------------+"
 echo "+                                          +"
-echo "+               恢 复 模 式                +"
+echo "+               恢 复 模 式                 +"
 echo "+                                          +"
 echo "+------------------------------------------+"
 sleep 2
@@ -427,60 +427,62 @@ done
 # EXT2
 #===============================================================================
 
-if [ ! -f ext2.tar ]; then
-	echo "SD 卡分区(ext2): 无法执行恢复."
+if [ ! -f ext.tar ]; then
+	echo "SD 卡分区(ext): 无法执行恢复."
 else 
 	if [ $REST_EXT2 -eq 0 ]; then
-		echo "SD 卡分区(ext2): 已跳过."
+		echo "SD 卡分区(ext): 已跳过."
 	elif [ ! -d /sddata ]; then
-		echo "E: 未找到 SD 卡分区(ext2)"
-		echo "SD 卡分区(ext2): 无法恢复."
-		ERROR="${ERROR}SD 卡分区(ext2): 无法恢复不存在的分区.\n"
+		echo "E: 未找到 SD 卡分区(ext)"
+		echo "SD 卡分区(ext): 无法恢复."
+		ERROR="${ERROR}SD 卡分区(ext): 无法恢复不存在的分区.\n"
 	else	
-		if [ ! -f ext2.md5 ]; then
-			echo "未找到 SD 卡分区(ext2)校验文件, 已跳过."		
+		if [ ! -f ext.md5 ]; then
+			echo "未找到 SD 卡分区(ext)校验文件, 已跳过."		
 			
 			if [ $COMPRESSED -eq 1 ]; then
 				#delete the uncompressed part
-				rm ext2.tar
+				rm ext.tar
 			fi
 			
-			ERROR="${ERROR}SD 卡分区(ext2): 未发现 MD5 校验文件.\n"
+			ERROR="${ERROR}SD 卡分区(ext): 未发现 MD5 校验文件.\n"
 			
 		else
 					
-			echo -n "SD 卡分区(ext2): 正在校验 MD5..."
-			md5sum -c ext2.md5 > /dev/null
+			echo -n "SD 卡分区(ext): 正在校验 MD5..."
+			md5sum -c ext.md5 > /dev/null
 			
 			if [ $? -eq 1 ]; then
 				echo "校验失败"
-				echo "SD 卡分区(ext2)校验值不匹配, 已跳过."
+				echo "SD 卡分区(ext)校验值不匹配, 已跳过."
 				
 				if [ $COMPRESSED -eq 1 ]; then
 					#delete the uncompressed part
-					rm ext2.tar
+					rm ext.tar
 				fi
 				
-				ERROR="${ERROR}SD 卡分区(ext2): MD5 值不匹配.\n"
+				ERROR="${ERROR}SD 卡分区(ext): MD5 值不匹配.\n"
 				
 			else
 				echo "完成"
-				echo -n "SD 卡分区(ext2): 正在删除..."
+				echo -n "SD 卡分区(ext): 正在删除..."
 				umount /sddata 2> /dev/null
-				mkfs.ext2 -c /dev/block/mmcblk0p2 > /dev/null
+				mount /sddata
+				rm -rf /sddata/*
 				echo "完成"
+
 				
-				echo -n "SD 卡分区(ext2): 正在恢复..."
+				echo -n "SD 卡分区(ext): 正在恢复..."
 				mount /sddata
 				CW2=$PWD
 				cd /sddata
-				tar -xvf $RESTOREPATH/ext2.tar ./ > /dev/null
+				tar -xvf $RESTOREPATH/ext.tar ./ > /dev/null
 				cd "$CW2"
 				echo "完成"
 				
 				if [ $COMPRESSED -eq 1 ]; then
 					#delete the uncompressed part
-					rm ext2.tar
+					rm ext.tar
 				fi
 			fi
 		fi
@@ -495,7 +497,7 @@ cd "$CWD"
 if [ "$ERROR" != "" ]; then
 	echo "+----------------------------------------------+"
 	echo "+                                              +"
-	echo "+                 恢复中的错误                 +"
+	echo "+                 恢复中的错误                  +"
 	echo "+                                              +"
 	echo "+----------------------------------------------+"
 	
