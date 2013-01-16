@@ -63,7 +63,6 @@ int main(int argc, char** argv) {
     // Extract the script from the package.
 
     char* package_data = argv[3];
-    setenv("UPDATE_PACKAGE", package_data, 1);
     ZipArchive za;
     int err;
     err = mzOpenZipArchive(package_data, &za);
@@ -137,9 +136,7 @@ int main(int argc, char** argv) {
         free(result);
     }
 
-    if (updater_info.package_zip) {
-        mzCloseZipArchive(updater_info.package_zip);
-    }
+    mzCloseZipArchive(&za);
     free(script);
 
     return 0;

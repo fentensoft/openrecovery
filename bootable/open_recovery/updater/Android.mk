@@ -4,7 +4,6 @@ LOCAL_PATH := $(call my-dir)
 
 updater_src_files := \
 	install.c \
-	../mounts.c \
 	updater.c
 
 #
@@ -19,19 +18,11 @@ LOCAL_MODULE_TAGS := eng
 
 LOCAL_SRC_FILES := $(updater_src_files)
 
-ifeq ($(TARGET_USERIMAGES_USE_EXT4), true)
-LOCAL_CFLAGS += -DUSE_EXT4
-LOCAL_C_INCLUDES += system/extras/ext4_utils
-LOCAL_STATIC_LIBRARIES += libext4_utils libz
-endif
-
-LOCAL_STATIC_LIBRARIES += libflashutils libmtdutils libmmcutils libbmlutils
-
-LOCAL_STATIC_LIBRARIES += $(TARGET_RECOVERY_UPDATER_LIBS) $(TARGET_RECOVERY_UPDATER_EXTRA_LIBS)
-LOCAL_STATIC_LIBRARIES += libapplypatch libedify libmtdutils libminzip libz
+LOCAL_STATIC_LIBRARIES := $(TARGET_RECOVERY_UPDATER_LIBS) $(TARGET_RECOVERY_UPDATER_EXTRA_LIBS)
+LOCAL_STATIC_LIBRARIES += libapplypatch_orcvr libedify_orcvr libmtdutils_orcvr libminzip_orcvr libz
 LOCAL_STATIC_LIBRARIES += libmincrypt libbz
 LOCAL_STATIC_LIBRARIES += libcutils libstdc++ libc
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/..
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/.. 
 
 # Each library in TARGET_RECOVERY_UPDATER_LIBS should have a function
 # named "Register_<libname>()".  Here we emit a little C function that
@@ -54,7 +45,7 @@ inc := $(call intermediates-dir-for,PACKAGING,updater_extensions)/register.inc
 
 junk := $(shell mkdir -p $(dir $(inc));\
 	        echo $(TARGET_RECOVERY_UPDATER_LIBS) > $(inc).temp;\
-	        diff -q $(inc).temp $(inc).list 2>/dev/null || cp -f $(inc).temp $(inc).list)
+	        diff -q $(inc).temp $(inc).list || cp -f $(inc).temp $(inc).list)
 
 $(inc) : libs := $(TARGET_RECOVERY_UPDATER_LIBS)
 $(inc) : $(inc).list
@@ -68,14 +59,11 @@ $(inc) : $(inc).list
 $(call intermediates-dir-for,EXECUTABLES,updater)/updater.o : $(inc)
 LOCAL_C_INCLUDES += $(dir $(inc))
 
-LOCAL_MODULE := updater
+LOCAL_MODULE := updater-or
 
+LOCAL_MODULE_PATH := $(LOCAL_PATH)/../../../OpenRecovery/sbin
+LOCAL_UNSTRIPPED_PATH := $(TARGET_OUT_UNSTRIPPED)/recovery/
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 
 include $(BUILD_EXECUTABLE)
 
-
-file := $(PRODUCT_OUT)/utilities/update-binary
-ALL_PREBUILT += $(file)
-$(file) : $(TARGET_OUT)/bin/updater | $(ACP)
-	$(transform-prebuilt-to-target)

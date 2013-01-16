@@ -23,7 +23,7 @@ LOCAL_CFLAGS := -Os -fno-stack-protector
 
 LOCAL_MODULE := open_recovery_STCU
 LOCAL_MODULE_STEM := open_rcvr.STCU
-LOCAL_MODULE_PATH := $(TARGET_RECOVERY_OUT)
+LOCAL_MODULE_PATH := $(LOCAL_PATH)/../../OpenRecovery/sbin
 LOCAL_UNSTRIPPED_PATH := $(TARGET_OUT_UNSTRIPPED)/recovery/
 
 LOCAL_FORCE_STATIC_EXECUTABLE := true
@@ -55,7 +55,7 @@ LOCAL_SHARED_LIBRARIES := \
 LOCAL_SRC_FILES:= ss.cpp
 
 LOCAL_MODULE:= sshot
-LOCAL_MODULE_PATH := $(TARGET_RECOVERY_OUT)/sbin
+LOCAL_MODULE_PATH := $(LOCAL_PATH)/../../OpenRecovery/sbin
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_EXECUTABLE)
@@ -63,6 +63,9 @@ include $(BUILD_EXECUTABLE)
 include $(commands_recovery_local_path)/minui/Android.mk
 include $(commands_recovery_local_path)/minzip/Android.mk
 include $(commands_recovery_local_path)/mtdutils/Android.mk
+include $(commands_recovery_local_path)/edify/Android.mk
+include $(commands_recovery_local_path)/updater/Android.mk
+include $(commands_recovery_local_path)/applypatch/Android.mk
 
 commands_recovery_local_path :=
 
