@@ -512,7 +512,7 @@ wipe_data(int confirm)
                       
     int chosen_item = show_interactive_menu(headers, items);
 		hide_menu_selection();
-    if (chosen_item != 8) 
+    if (chosen_item != 2)
         return;
   }
 
