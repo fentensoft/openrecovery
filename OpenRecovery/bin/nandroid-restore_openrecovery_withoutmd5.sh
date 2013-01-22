@@ -28,7 +28,7 @@ ERROR=""
 
 echo "+------------------------------------------+"
 echo "+                                          +"
-echo "+               恢 复 模 式                +"
+echo "                恢 复 模 式                 "
 echo "+                                          +"
 echo "+------------------------------------------+"
 sleep 2
@@ -162,7 +162,7 @@ if [ `ls *.bz2 2>/dev/null|wc -l` -ge 1 ]; then
 		cd $CWD
 		exit 1
 	else
-		echo "请确认 SD 卡上至少有 256MB 或更大的空间."
+		echo "  请确认 SD 卡上至少有 256MB 或更大的空间."
 	fi
 fi
 
@@ -180,7 +180,7 @@ fi
 
 for image in boot lbl logo; do
 	if [ ! -f $image.img* ]; then
-		echo "${image}: 无法执行备份."
+		echo "${image}: 无法执行恢复."
 		continue
 	fi
 	
@@ -234,7 +234,7 @@ done
 
 for image in system data cache cdrom; do
 	if [ ! -f $image.img* ]; then
-		echo "${image}: 无法执行备份."
+		echo "${image}: 无法执行恢复."
 		continue
 	fi
 	
@@ -289,7 +289,7 @@ for image in system data cache cdrom; do
 	
 	if [ "$image" == "system" ]; then
 		if [ -d /system/persistent ]; then
-			echo -n "${image}: 正在备份..."
+			echo -n "${image}: 正在恢复..."
 			
 			mkdir /system_persistent > /dev/null
 			cp -a /system/persistent /system_persistent > /dev/null
@@ -353,29 +353,28 @@ done
 #===============================================================================
 
 if [ ! -f ext.tar ]; then
-	echo "SD 卡分区(ext): 无法执行备份."
+	echo "ext: 无法执行恢复."
 else 
 	if [ $REST_EXT2 -eq 0 ]; then
 		echo "SD 卡分区(ext): 已跳过."
 	elif [ ! -d /sddata ]; then
 		echo "E: 未找到 SD 卡分区(ext)"
-		echo "SD 卡分区(ext): 无法恢复."
-		ERROR="${ERROR} SD 卡分区(ext): 无法恢复不存在的分区.\n"
+		echo "ext: 无法恢复."
+		ERROR="${ERROR} ext: 无法恢复不存在的分区.\n"
 	else	
 
-        umount /sddata 2> /dev/null
-      	e2fsck -fp /dev/block/mmcblk0p2 > /dev/null
-	      echo "done"
- 				echo -n "SD 卡分区(ext): 正在删除..."
-        mount /sddata
-        rm -rf /sddata/*
-	        	echo "完成"
-	        	echo -n "SD 卡分区(ext): 正在恢复..."
+				echo -n "ext: 正在删除..."
+				umount /sddata 2> /dev/null
+				mount /sddata
+				rm -rf /sddata/*
+				echo "完成"
+				echo -n "ext: 正在恢复..."
+				mount /sddata
 				CW2=$PWD
 				cd /sddata
 				tar -xvf $RESTOREPATH/ext.tar ./ > /dev/null
 				cd "$CW2"
-		echo "完成"
+				echo "完成"
 				
 				if [ $COMPRESSED -eq 1 ]; then
 					#delete the uncompressed part
@@ -392,7 +391,7 @@ cd "$CWD"
 if [ "$ERROR" != "" ]; then
 	echo "+----------------------------------------------+"
 	echo "+                                              +"
-	echo "+                 恢复中的错误                  +"
+	echo "                 恢复中的错误                  "
 	echo "+                                              +"
 	echo "+----------------------------------------------+"
 	

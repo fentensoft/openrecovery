@@ -28,7 +28,7 @@ ERROR=""
 
 echo "+------------------------------------------+"
 echo "+                                          +"
-echo "+               恢 复 模 式                 +"
+echo "                恢 复 模 式                 "
 echo "+                                          +"
 echo "+------------------------------------------+"
 sleep 2
@@ -162,7 +162,7 @@ if [ `ls *.bz2 2>/dev/null|wc -l` -ge 1 ]; then
 		cd $CWD
 		exit 1
 	else
-		echo "请确认 SD 卡上至少有 256MB 或更大的空间."
+		echo "  请确认 SD 卡上至少有 256MB 或更大的空间."
 	fi
 fi
 
@@ -428,14 +428,14 @@ done
 #===============================================================================
 
 if [ ! -f ext.tar ]; then
-	echo "SD 卡分区(ext): 无法执行恢复."
+	echo "ext: 无法执行恢复."
 else 
 	if [ $REST_EXT2 -eq 0 ]; then
 		echo "SD 卡分区(ext): 已跳过."
 	elif [ ! -d /sddata ]; then
 		echo "E: 未找到 SD 卡分区(ext)"
-		echo "SD 卡分区(ext): 无法恢复."
-		ERROR="${ERROR}SD 卡分区(ext): 无法恢复不存在的分区.\n"
+		echo "ext: 无法恢复."
+		ERROR="${ERROR} ext: 无法恢复不存在的分区.\n"
 	else	
 		if [ ! -f ext.md5 ]; then
 			echo "未找到 SD 卡分区(ext)校验文件, 已跳过."		
@@ -445,11 +445,11 @@ else
 				rm ext.tar
 			fi
 			
-			ERROR="${ERROR}SD 卡分区(ext): 未发现 MD5 校验文件.\n"
+			ERROR="${ERROR} ext: 未发现 MD5 校验文件.\n"
 			
 		else
 					
-			echo -n "SD 卡分区(ext): 正在校验 MD5..."
+			echo -n "ext: 正在校验 MD5..."
 			md5sum -c ext.md5 > /dev/null
 			
 			if [ $? -eq 1 ]; then
@@ -461,18 +461,16 @@ else
 					rm ext.tar
 				fi
 				
-				ERROR="${ERROR}SD 卡分区(ext): MD5 值不匹配.\n"
+				ERROR="${ERROR} ext: MD5 值不匹配.\n"
 				
 			else
 				echo "完成"
-				echo -n "SD 卡分区(ext): 正在删除..."
+				echo -n "ext: 正在删除..."
 				umount /sddata 2> /dev/null
 				mount /sddata
 				rm -rf /sddata/*
 				echo "完成"
-
-				
-				echo -n "SD 卡分区(ext): 正在恢复..."
+				echo -n "ext: 正在恢复..."
 				mount /sddata
 				CW2=$PWD
 				cd /sddata
@@ -497,7 +495,7 @@ cd "$CWD"
 if [ "$ERROR" != "" ]; then
 	echo "+----------------------------------------------+"
 	echo "+                                              +"
-	echo "+                 恢复中的错误                  +"
+	echo "                 恢复中的错误                  "
 	echo "+                                              +"
 	echo "+----------------------------------------------+"
 	

@@ -20,3 +20,5 @@ if [ "$STATUS" == "Full" ]; then
 fi
 echo "电池电量 - ${CAP}% (${STATU})" > "$MENU_FILE"
 echo "返回:menu:.." >> "$MENU_FILE"
+echo "*:break:*" >> "$MENU_FILE"
+echo "清除电池状态:shell:wipe_battery.sh" >> "$MENU_FILE"

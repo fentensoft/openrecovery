@@ -27,7 +27,7 @@ FREEBLOCKS="`df -k /sdcard| grep sdcard | awk '{ print $4 }'`"
 
 echo "+------------------------------------------+"
 echo "+                                          +"
-echo "+               备 份 模 式                 +"
+echo "                备 份 模 式                 "
 echo "+                                          +"
 echo "+------------------------------------------+"
 sleep 2
@@ -145,10 +145,10 @@ fi
 #require at least 400 MiB to proceed
 if [ $FREEBLOCKS -le 409600 ]; then
 	echo "E: 存储空间不足"
-	echo "请确认 SD 卡上至少有 400MB 或更大的空间."
+	echo "  请确认 SD 卡上至少有 400MB 或更大的空间."
 	exit 1
 else
-	echo "请确认 SD 卡上至少有 400MB 或更大的空间."
+	echo "  请确认 SD 卡上至少有 400MB 或更大的空间."
 fi
 
 #build the prefix and check if the filesystem partitions are properly mounteable
@@ -353,12 +353,12 @@ done
 #===============================================================================
 
 if [ $BKP_EXT2 -eq 1 ]; then
-	echo -n "SD 卡分区(ext): 正在检查..."
+	echo -n "ext: 正在检查..."
 	umount /sddata 2> /dev/null
 	e2fsck -fp /dev/block/mmcblk0p2 > /dev/null
 	echo "完成"
 	mount /sddata
-	echo -n "SD 卡分区(ext): 正在备份..."
+	echo -n "ext: 正在备份..."
 	CW2=$PWD
 	cd /sddata
 	tar -cvf $DESTDIR/ext.tar ./ > /dev/null
@@ -366,7 +366,7 @@ if [ $BKP_EXT2 -eq 1 ]; then
 	echo "完成"
 	
 	#generate the md5 sum
-	echo -n "SD 卡分区(ext): 正在创建校验文件..."
+	echo -n "ext: 正在创建校验文件..."
 	md5sum ext.tar > ext.md5
 	echo "完成"
 else
