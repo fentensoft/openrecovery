@@ -52,7 +52,7 @@ static RootInfo g_roots[] = {
     { "RECOVERY:", g_mtd_device, NULL, "recovery", "/", g_raw },
     { "SDCARD:", "/dev/block/mmcblk0p1", "/dev/block/mmcblk0", NULL, "/sdcard", "vfat" },
 #if !OPEN_RCVR_VERSION_LITE
-    { "SDDATA:", "/dev/block/mmcblk0p2", NULL, NULL, "/sddata", "ext2" },
+    { "SDDATA:", "/dev/block/mmcblk0p2", NULL, NULL, "/sddata", "ext4" },
 #endif
     { "SYSTEM:", g_mtd_device, NULL, "system", "/system", "yaffs2" },
     { "MBM:", g_mtd_device, NULL, "mbm", NULL, g_raw },
